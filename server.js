@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const fetch = require('node-fetch');
 
 dotenv.config();
 
@@ -12,6 +13,8 @@ app.use(express.json());
 app.post('/api/generate', async (req, res) => {
   try {
     const { apiKey } = req.body;
+    console.log('Generating ideas with prompt:', req.body.prompt);
+
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -32,12 +35,16 @@ app.post('/api/generate', async (req, res) => {
       })
     });
 
+    const responseText = await response.text();
+    console.log('API Response:', responseText);
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`API error: ${errorData.error?.message || response.statusText}`);
+      throw new Error(`API error: ${responseText}`);
     }
 
-    const data = await response.json();
+    const data = JSON.parse(responseText);
+    console.log('Parsed data:', data);
+
     // JSONを抽出して解析
     const jsonMatch = data.content[0].text.match(/\[[\s\S]*\]/);
 
@@ -67,6 +74,8 @@ app.post('/api/generate', async (req, res) => {
 app.post('/api/analyze', async (req, res) => {
   try {
     const { apiKey, idea } = req.body;
+    console.log('Analyzing idea:', req.body.prompt);
+
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -87,12 +96,16 @@ app.post('/api/analyze', async (req, res) => {
       })
     });
 
+    const responseText = await response.text();
+    console.log('API Response:', responseText);
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`API error: ${errorData.error?.message || response.statusText}`);
+      throw new Error(`API error: ${responseText}`);
     }
 
-    const data = await response.json();
+    const data = JSON.parse(responseText);
+    console.log('Parsed data:', data);
+
     // JSONを抽出して解析
     const jsonMatch = data.content[0].text.match(/\{[\s\S]*\}/);
 
