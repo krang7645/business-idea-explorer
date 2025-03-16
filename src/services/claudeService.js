@@ -68,8 +68,11 @@ export const generateIdeasWithClaude = async (apiKey) => {
       headers: {
         'Content-Type': 'application/json',
         'anthropic-version': '2023-06-01',
-        'anthropic-api-key': apiKey || defaultApiKey
+        'anthropic-api-key': apiKey || defaultApiKey,
+        'Access-Control-Allow-Origin': '*'
       },
+      mode: 'cors',
+      credentials: 'include',
       body: JSON.stringify({
         model: 'claude-3-sonnet-20240229',
         max_tokens: 4000,
@@ -129,8 +132,11 @@ export const analyzeIdeaWithClaude = async (apiKey, idea) => {
       headers: {
         'Content-Type': 'application/json',
         'anthropic-version': '2023-06-01',
-        'anthropic-api-key': apiKey || defaultApiKey
+        'anthropic-api-key': apiKey || defaultApiKey,
+        'Access-Control-Allow-Origin': '*'
       },
+      mode: 'cors',
+      credentials: 'include',
       body: JSON.stringify({
         model: 'claude-3-sonnet-20240229',
         max_tokens: 4000,
