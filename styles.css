@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors;
+  }
+  
+  .btn-secondary {
+    @apply px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors;
+  }
+  
+  .card {
+    @apply border rounded-lg p-4 bg-white hover:shadow-md transition-shadow;
+  }
+  
+  .section-title {
+    @apply font-semibold text-lg mb-3;
+  }
+  
+  .badge {
+    @apply px-2 py-1 text-xs rounded;
+  }
+  
+  .badge-blue {
+    @apply bg-blue-100 text-blue-800;
+  }
+  
+  .badge-green {
+    @apply bg-green-100 text-green-800;
+  }
+  
+  .badge-yellow {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+  
+  .badge-red {
+    @apply bg-red-100 text-red-800;
+  }
+  
+  .badge-gray {
+    @apply bg-gray-100 text-gray-800;
+  }
+  
+  .panel {
+    @apply bg-gray-50 p-4 rounded-lg border border-gray-200;
+  }
+}

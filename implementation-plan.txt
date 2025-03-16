@@ -1,0 +1,59 @@
+# ビジネスアイデアエクスプローラー実装計画
+
+## 1. プロジェクト概要
+個人開発者向けのビジネスアイデア生成・分析ツール。ボタンを押すとAIが10個のビジネスアイデアを生成し、詳細分析ができる。
+
+## 2. 必要なファイル構成
+
+```
+business-idea-explorer/
+├── public/
+│   ├── favicon.ico
+│   └── index.html
+├── src/
+│   ├── components/
+│   │   ├── BusinessIdeaExplorer.jsx     # メインコンポーネント
+│   │   ├── IdeaList.jsx                 # アイデア一覧表示コンポーネント
+│   │   ├── IdeaAnalysis.jsx             # 詳細分析表示コンポーネント
+│   │   ├── ApiKeyModal.jsx              # APIキー入力モーダル
+│   │   └── LoadingSpinner.jsx           # ローディングアニメーション
+│   ├── services/
+│   │   └── claudeService.js             # Claude APIとの通信処理
+│   ├── utils/
+│   │   ├── formatters.js                # データフォーマット関数
+│   │   └── localData.js                 # ローカルフォールバックデータ
+│   ├── App.jsx                          # アプリルートコンポーネント
+│   ├── index.jsx                        # エントリーポイント
+│   └── styles.css                       # スタイル定義
+├── package.json
+├── tailwind.config.js                   # Tailwind CSS設定
+└── README.md
+```
+
+## 3. 使用する技術スタック
+
+- **フロントエンド**: React (Next.js/Vite)
+- **スタイリング**: Tailwind CSS
+- **アイコン**: Lucide React
+- **API通信**: Fetch API
+- **LLM**: Claude API (Anthropic)
+- **デプロイ**: Vercel/Netlify
+
+## 4. 実装手順
+
+1. プロジェクトのセットアップ
+2. コンポーネントの実装
+3. Claude API連携機能の実装
+4. スタイリングの調整
+5. エラーハンドリングの実装
+6. デプロイ
+
+## 5. API連携の実装詳細
+
+Claude APIとの連携には以下の設定が必要:
+
+1. API Keyの取得とセキュアな管理
+2. 適切なプロンプト設計
+3. レスポンスのパース処理
+4. エラーハンドリング
+5. ローカルフォールバック機能
