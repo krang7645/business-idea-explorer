@@ -1,5 +1,6 @@
 import React from 'react';
 import BusinessIdeaExplorer from './components/BusinessIdeaExplorer';
+import './styles.css';
 
 function App() {
   return (
