@@ -5,7 +5,6 @@ import IdeaAnalysis from './IdeaAnalysis';
 import ApiKeyModal from './ApiKeyModal';
 import LoadingSpinner from './LoadingSpinner';
 import { generateIdeasWithClaude, analyzeIdeaWithClaude } from '../services/claudeService';
-import { generateLocalIdeas, generateLocalAnalysis } from '../utils/localData';
 
 const BusinessIdeaExplorer = () => {
   const [ideas, setIdeas] = useState([]);
