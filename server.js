@@ -32,8 +32,31 @@ app.post('/api/generate', async (req, res) => {
       })
     });
 
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`API error: ${errorData.error?.message || response.statusText}`);
+    }
+
     const data = await response.json();
-    res.json(data);
+    // JSONを抽出して解析
+    const jsonMatch = data.content[0].text.match(/\[[\s\S]*\]/);
+
+    if (jsonMatch) {
+      try {
+        const ideas = JSON.parse(jsonMatch[0]);
+        // 各アイデアにユニークIDを追加
+        const ideasWithUniqueIds = ideas.map(idea => ({
+          ...idea,
+          id: idea.id || Math.random().toString(36).substr(2, 9)
+        }));
+        res.json({ content: [{ text: JSON.stringify(ideasWithUniqueIds) }] });
+      } catch (parseError) {
+        console.error('JSON解析エラー:', parseError);
+        throw new Error('生成されたアイデアを解析できませんでした。もう一度お試しください。');
+      }
+    } else {
+      throw new Error('適切な形式のアイデアを生成できませんでした。もう一度お試しください。');
+    }
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: error.message });
@@ -64,8 +87,26 @@ app.post('/api/analyze', async (req, res) => {
       })
     });
 
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`API error: ${errorData.error?.message || response.statusText}`);
+    }
+
     const data = await response.json();
-    res.json(data);
+    // JSONを抽出して解析
+    const jsonMatch = data.content[0].text.match(/\{[\s\S]*\}/);
+
+    if (jsonMatch) {
+      try {
+        const analysis = JSON.parse(jsonMatch[0]);
+        res.json({ content: [{ text: JSON.stringify(analysis) }] });
+      } catch (parseError) {
+        console.error('JSON解析エラー:', parseError);
+        throw new Error('生成された分析を解析できませんでした。もう一度お試しください。');
+      }
+    } else {
+      throw new Error('適切な形式の分析を生成できませんでした。もう一度お試しください。');
+    }
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: error.message });
