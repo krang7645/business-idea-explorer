@@ -68,11 +68,12 @@ export const generateIdeasWithClaude = async (apiKey) => {
       headers: {
         'Content-Type': 'application/json',
         'anthropic-version': '2023-06-01',
-        'x-api-key': apiKey || defaultApiKey
+        'anthropic-api-key': apiKey || defaultApiKey
       },
       body: JSON.stringify({
         model: 'claude-3-sonnet-20240229',
         max_tokens: 4000,
+        system: 'You are a business idea generator assistant. You generate creative and practical business ideas that can be implemented by individual developers.',
         messages: [
           {
             role: 'user',
@@ -128,11 +129,12 @@ export const analyzeIdeaWithClaude = async (apiKey, idea) => {
       headers: {
         'Content-Type': 'application/json',
         'anthropic-version': '2023-06-01',
-        'x-api-key': apiKey || defaultApiKey
+        'anthropic-api-key': apiKey || defaultApiKey
       },
       body: JSON.stringify({
         model: 'claude-3-sonnet-20240229',
         max_tokens: 4000,
+        system: 'You are a business analyst assistant. You provide detailed analysis of business ideas with practical implementation suggestions.',
         messages: [
           {
             role: 'user',
