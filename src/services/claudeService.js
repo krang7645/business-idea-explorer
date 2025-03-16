@@ -54,21 +54,7 @@ const analyzeIdeaPrompt = (idea) => `以下のビジネスアイデアについ�
 - なるべく自動化したい
 - サブスクリプションや広告収入でマネタイズしたい
 
-詳細な説明では、サービスの概要、主な機能、ターゲットユーザー、どのような問題を解決するのかについて詳細に記述してください。
-
-以下のような形式のJSONで出力してください：
-{
-  "description": "詳細な説明...",
-  "pros": ["メリット1", "メリット2", ...],
-  "cons": ["デメリット1", "デメリット2", ...],
-  "techStack": ["技術1", "技術2", ...],
-  "similarServices": [{"name": "サービス名1", "url": "https://example.com"}, ...],
-  "monetization": ["マネタイズ方法1", "マネタイズ方法2", ...],
-  "implementationSteps": ["ステップ1", "ステップ2", ...],
-  "timeToMarket": "X週間",
-  "monthlyRevenueEstimate": "Y万円",
-  "marketingStrategy": ["戦略1", "戦略2", ...]
-}`;
+詳細な説明では、サービスの概要、主な機能、ターゲットユーザー、どのような問題を解決するのかについて詳細に記述してください。`;
 
 /**
  * Claude APIを使用してビジネスアイデアを生成する
@@ -81,8 +67,8 @@ export const generateIdeasWithClaude = async (apiKey) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey || defaultApiKey,
-        'anthropic-version': '2023-06-01'
+        'anthropic-version': '2023-06-01',
+        'x-api-key': apiKey || defaultApiKey
       },
       body: JSON.stringify({
         model: 'claude-3-sonnet-20240229',
@@ -141,8 +127,8 @@ export const analyzeIdeaWithClaude = async (apiKey, idea) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey || defaultApiKey,
-        'anthropic-version': '2023-06-01'
+        'anthropic-version': '2023-06-01',
+        'x-api-key': apiKey || defaultApiKey
       },
       body: JSON.stringify({
         model: 'claude-3-sonnet-20240229',
