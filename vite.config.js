@@ -8,4 +8,11 @@ export default defineConfig({
     port: 3000,
     open: true
   },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: false,
+    minify: 'terser',
+    target: 'es2015'
+  }
 });
