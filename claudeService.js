@@ -2,6 +2,9 @@
  * Claude APIと通信するためのサービスモジュール
  */
 
+// デフォルトのAPIキーを環境変数から取得
+const defaultApiKey = import.meta.env.VITE_CLAUDE_API_KEY;
+
 // アイデア生成用のプロンプト
 const generateIdeasPrompt = `以下の条件を満たす10個のビジネスアイデアをJSON形式で生成してください。各アイデアには title, category, difficulty, timeEstimate, monetizationPotential の属性を含めてください。
 - 月10万円の収益を目標にできるもの
@@ -69,7 +72,7 @@ const analyzeIdeaPrompt = (idea) => `以下のビジネスアイデアについ�
 
 /**
  * Claude APIを使用してビジネスアイデアを生成する
- * @param {string} apiKey - Claude API Key
+ * @param {string} [apiKey] - Claude API Key（オプション、環境変数が優先）
  * @returns {Promise<Array>} 生成されたアイデアの配列
  */
 export const generateIdeasWithClaude = async (apiKey) => {
@@ -78,7 +81,7 @@ export const generateIdeasWithClaude = async (apiKey) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
+        'x-api-key': apiKey || defaultApiKey,
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
@@ -100,10 +103,10 @@ export const generateIdeasWithClaude = async (apiKey) => {
 
     const data = await response.json();
     const content = data.content[0].text;
-    
+
     // JSONを抽出して解析
     const jsonMatch = content.match(/\[[\s\S]*\]/);
-    
+
     if (jsonMatch) {
       try {
         const ideas = JSON.parse(jsonMatch[0]);
@@ -128,7 +131,7 @@ export const generateIdeasWithClaude = async (apiKey) => {
 
 /**
  * Claude APIを使用してビジネスアイデアの詳細分析を行う
- * @param {string} apiKey - Claude API Key
+ * @param {string} [apiKey] - Claude API Key（オプション、環境変数が優先）
  * @param {Object} idea - 分析するアイデア
  * @returns {Promise<Object>} 分析結果
  */
@@ -138,7 +141,7 @@ export const analyzeIdeaWithClaude = async (apiKey, idea) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
+        'x-api-key': apiKey || defaultApiKey,
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
@@ -160,10 +163,10 @@ export const analyzeIdeaWithClaude = async (apiKey, idea) => {
 
     const data = await response.json();
     const content = data.content[0].text;
-    
+
     // JSONを抽出して解析
     const jsonMatch = content.match(/\{[\s\S]*\}/);
-    
+
     if (jsonMatch) {
       try {
         const analysis = JSON.parse(jsonMatch[0]);

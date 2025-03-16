@@ -18,7 +18,8 @@ const BusinessIdeaExplorer = () => {
     return saved !== null ? parseInt(saved, 10) : 3;
   });
   const [apiKey, setApiKey] = useState(() => {
-    return localStorage.getItem('claudeApiKey') || '';
+    // 環境変数からAPIキーを取得、なければローカルストレージから
+    return import.meta.env.VITE_CLAUDE_API_KEY || localStorage.getItem('claudeApiKey') || '';
   });
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -28,9 +29,9 @@ const BusinessIdeaExplorer = () => {
     localStorage.setItem('remainingUsage', remainingUsage.toString());
   }, [remainingUsage]);
 
-  // APIキーを保存
+  // APIキーを保存（環境変数が設定されていない場合のみ）
   useEffect(() => {
-    if (apiKey) {
+    if (apiKey && !import.meta.env.VITE_CLAUDE_API_KEY) {
       localStorage.setItem('claudeApiKey', apiKey);
     }
   }, [apiKey]);
@@ -58,13 +59,13 @@ const BusinessIdeaExplorer = () => {
         setIsLoading(false);
         return;
       }
-      
+
       setIdeas(newIdeas);
       setRemainingUsage(prevCount => prevCount - 1);
     } catch (error) {
       console.error('アイデア生成エラー:', error);
       setErrorMessage(`エラーが発生しました: ${error.message}`);
-      
+
       // エラーが発生した場合はローカルデータにフォールバック
       const localIdeas = generateLocalIdeas();
       setIdeas(localIdeas);
@@ -127,12 +128,12 @@ const BusinessIdeaExplorer = () => {
         // ローカルデータで分析
         analysis = generateLocalAnalysis(idea);
       }
-      
+
       setDetailedAnalysis(analysis);
     } catch (error) {
       console.error('分析エラー:', error);
       setErrorMessage(`分析中にエラーが発生しました: ${error.message}`);
-      
+
       // エラーが発生した場合はローカルデータにフォールバック
       const localAnalysis = generateLocalAnalysis(idea);
       setDetailedAnalysis(localAnalysis);
@@ -152,9 +153,9 @@ const BusinessIdeaExplorer = () => {
       <div className="text-center mb-6">
         <h1 className="text-2xl font-bold mb-2">ビジネスアイデアエクスプローラー</h1>
         <p className="text-gray-600 mb-4">ボタンを押すだけで、あなたの次のプロジェクトのアイデアを見つけましょう</p>
-        
+
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4">
-          <button 
+          <button
             onClick={generateIdeas}
             disabled={isLoading || remainingUsage <= 0}
             className="flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 w-full sm:w-auto"
@@ -171,7 +172,7 @@ const BusinessIdeaExplorer = () => {
               </>
             )}
           </button>
-          
+
           <button
             onClick={handleConfigureApiKey}
             className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 w-full sm:w-auto"
@@ -179,12 +180,12 @@ const BusinessIdeaExplorer = () => {
             APIキー設定
           </button>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <div className="text-sm text-gray-500">
             残り無料生成回数: {remainingUsage}回
           </div>
-          
+
           {apiKey && (
             <div className="text-sm text-green-600">
               ✓ Claude API 接続中
@@ -202,9 +203,9 @@ const BusinessIdeaExplorer = () => {
 
       {/* アイデア一覧 */}
       {ideas.length > 0 && (
-        <IdeaList 
-          ideas={ideas} 
-          onAnalyzeIdea={analyzeIdea} 
+        <IdeaList
+          ideas={ideas}
+          onAnalyzeIdea={analyzeIdea}
         />
       )}
 
@@ -213,12 +214,12 @@ const BusinessIdeaExplorer = () => {
 
       {/* 詳細分析結果 */}
       {selectedIdea && detailedAnalysis && (
-        <IdeaAnalysis 
-          idea={selectedIdea} 
-          analysis={detailedAnalysis} 
+        <IdeaAnalysis
+          idea={selectedIdea}
+          analysis={detailedAnalysis}
         />
       )}
-      
+
       {/* APIキー入力モーダル */}
       {showApiKeyModal && (
         <ApiKeyModal
@@ -227,7 +228,7 @@ const BusinessIdeaExplorer = () => {
           onCancel={handleCancelApiKey}
         />
       )}
-      
+
       <div className="mt-8 border-t pt-4 text-center text-sm text-gray-500">
         <p>© {new Date().getFullYear()} ビジネスアイデアエクスプローラー</p>
       </div>
