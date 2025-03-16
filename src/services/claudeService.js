@@ -63,26 +63,14 @@ const analyzeIdeaPrompt = (idea) => `以下のビジネスアイデアについ�
  */
 export const generateIdeasWithClaude = async (apiKey) => {
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('http://localhost:3001/api/generate', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01',
-        'anthropic-api-key': apiKey || defaultApiKey,
-        'Access-Control-Allow-Origin': '*'
+        'Content-Type': 'application/json'
       },
-      mode: 'cors',
-      credentials: 'include',
       body: JSON.stringify({
-        model: 'claude-3-sonnet-20240229',
-        max_tokens: 4000,
-        system: 'You are a business idea generator assistant. You generate creative and practical business ideas that can be implemented by individual developers.',
-        messages: [
-          {
-            role: 'user',
-            content: generateIdeasPrompt
-          }
-        ]
+        apiKey: apiKey || defaultApiKey,
+        prompt: generateIdeasPrompt
       })
     });
 
@@ -127,26 +115,15 @@ export const generateIdeasWithClaude = async (apiKey) => {
  */
 export const analyzeIdeaWithClaude = async (apiKey, idea) => {
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('http://localhost:3001/api/analyze', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01',
-        'anthropic-api-key': apiKey || defaultApiKey,
-        'Access-Control-Allow-Origin': '*'
+        'Content-Type': 'application/json'
       },
-      mode: 'cors',
-      credentials: 'include',
       body: JSON.stringify({
-        model: 'claude-3-sonnet-20240229',
-        max_tokens: 4000,
-        system: 'You are a business analyst assistant. You provide detailed analysis of business ideas with practical implementation suggestions.',
-        messages: [
-          {
-            role: 'user',
-            content: analyzeIdeaPrompt(idea)
-          }
-        ]
+        apiKey: apiKey || defaultApiKey,
+        idea,
+        prompt: analyzeIdeaPrompt(idea)
       })
     });
 
