@@ -13,21 +13,12 @@ const BusinessIdeaExplorer = () => {
   const [selectedIdea, setSelectedIdea] = useState(null);
   const [detailedAnalysis, setDetailedAnalysis] = useState(null);
   const [analysisLoading, setAnalysisLoading] = useState(false);
-  const [remainingUsage, setRemainingUsage] = useState(() => {
-    const saved = localStorage.getItem('remainingUsage');
-    return saved !== null ? parseInt(saved, 10) : 3;
-  });
   const [apiKey, setApiKey] = useState(() => {
     // 環境変数からAPIキーを取得、なければローカルストレージから
     return import.meta.env.VITE_CLAUDE_API_KEY || localStorage.getItem('claudeApiKey') || '';
   });
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-
-  // 残り使用回数を保存
-  useEffect(() => {
-    localStorage.setItem('remainingUsage', remainingUsage.toString());
-  }, [remainingUsage]);
 
   // APIキーを保存（環境変数が設定されていない場合のみ）
   useEffect(() => {
@@ -38,61 +29,28 @@ const BusinessIdeaExplorer = () => {
 
   // アイデア生成の実行関数
   const generateIdeas = async () => {
-    if (remainingUsage <= 0) {
-      setErrorMessage('無料利用回数が終了しました。');
-      return;
-    }
-
     setIsLoading(true);
     setSelectedIdea(null);
     setDetailedAnalysis(null);
     setErrorMessage('');
 
     try {
-      let newIdeas;
-      if (apiKey) {
-        // Claude APIを使用してアイデアを生成
-        newIdeas = await generateIdeasWithClaude(apiKey);
-      } else {
+      if (!apiKey) {
         // APIキーがない場合はモーダルを表示
         setShowApiKeyModal(true);
         setIsLoading(false);
         return;
       }
 
+      // Claude APIを使用してアイデアを生成
+      const newIdeas = await generateIdeasWithClaude(apiKey);
       setIdeas(newIdeas);
-      setRemainingUsage(prevCount => prevCount - 1);
     } catch (error) {
       console.error('アイデア生成エラー:', error);
       setErrorMessage(`エラーが発生しました: ${error.message}`);
-
-      // エラーが発生した場合はローカルデータにフォールバック
-      const localIdeas = generateLocalIdeas();
-      setIdeas(localIdeas);
-      setRemainingUsage(prevCount => prevCount - 1);
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // ローカルデータでアイデア生成
-  const generateIdeasLocally = () => {
-    if (remainingUsage <= 0) {
-      setErrorMessage('無料利用回数が終了しました。');
-      return;
-    }
-
-    setIsLoading(true);
-    setSelectedIdea(null);
-    setDetailedAnalysis(null);
-    setErrorMessage('');
-
-    setTimeout(() => {
-      const localIdeas = generateLocalIdeas();
-      setIdeas(localIdeas);
-      setIsLoading(false);
-      setRemainingUsage(prevCount => prevCount - 1);
-    }, 1000);
   };
 
   // APIキー保存処理
@@ -101,15 +59,12 @@ const BusinessIdeaExplorer = () => {
     setShowApiKeyModal(false);
     if (key) {
       generateIdeas();
-    } else {
-      generateIdeasLocally();
     }
   };
 
   // APIキー入力キャンセル時の処理
   const handleCancelApiKey = () => {
     setShowApiKeyModal(false);
-    generateIdeasLocally();
   };
 
   // 選択したアイデアの詳細分析を表示する関数
@@ -120,23 +75,18 @@ const BusinessIdeaExplorer = () => {
     setErrorMessage('');
 
     try {
-      let analysis;
-      if (apiKey) {
-        // Claude APIを使用して分析
-        analysis = await analyzeIdeaWithClaude(apiKey, idea);
-      } else {
-        // ローカルデータで分析
-        analysis = generateLocalAnalysis(idea);
+      if (!apiKey) {
+        setShowApiKeyModal(true);
+        setAnalysisLoading(false);
+        return;
       }
 
+      // Claude APIを使用して分析
+      const analysis = await analyzeIdeaWithClaude(apiKey, idea);
       setDetailedAnalysis(analysis);
     } catch (error) {
       console.error('分析エラー:', error);
       setErrorMessage(`分析中にエラーが発生しました: ${error.message}`);
-
-      // エラーが発生した場合はローカルデータにフォールバック
-      const localAnalysis = generateLocalAnalysis(idea);
-      setDetailedAnalysis(localAnalysis);
     } finally {
       setAnalysisLoading(false);
     }
@@ -157,7 +107,7 @@ const BusinessIdeaExplorer = () => {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4">
           <button
             onClick={generateIdeas}
-            disabled={isLoading || remainingUsage <= 0}
+            disabled={isLoading}
             className="flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 w-full sm:w-auto"
           >
             {isLoading ? (
@@ -182,10 +132,6 @@ const BusinessIdeaExplorer = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <div className="text-sm text-gray-500">
-            残り無料生成回数: {remainingUsage}回
-          </div>
-
           {apiKey && (
             <div className="text-sm text-green-600">
               ✓ Claude API 接続中
